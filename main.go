@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"flag"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -46,7 +45,8 @@ func main() {
 
 	router.HandleFunc("/generateTinyUrl/", controller.GenerateTinyUrl).Methods("POST")
 	router.HandleFunc("/{hashCode}", controller.RedirectTinyUrl).Methods("GET")
-
+	router.HandleFunc("/home/", controller.HomePage).Methods("GET")
+	log.Println("Application Started")
 	srv := &http.Server{
 		Addr: "0.0.0.0:8080",
 		// Good practice to set timeouts to avoid Slowloris attacks.
@@ -55,7 +55,7 @@ func main() {
 		IdleTimeout:  time.Second * 60,
 		Handler:      router, // Pass our instance of gorilla/mux in.
 	}
-	fmt.Println("server running at ", srv.Addr)
+	log.Println("server running at ", srv.Addr)
 	// Run our server in a goroutine so that it doesn't block.
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {

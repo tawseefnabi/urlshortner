@@ -36,3 +36,8 @@ func (s *Service) GenerateTinyUrl(urlModel model.UrlModel) model.UrlModel {
 		Url: computedUrl,
 	}
 }
+
+func (s *Service) RedirectTinyUrl(hash string) string {
+	tinyUrl := s.repo.Get(hash)
+	return tinyUrl.Url
+}

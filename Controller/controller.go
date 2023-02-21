@@ -5,8 +5,13 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	model "github.com/tawseefnabi/urlshortner/Model"
 	service "github.com/tawseefnabi/urlshortner/Service"
+)
+
+var (
+	defaultUrl string = "http://localhost:8080/home/"
 )
 
 type Controller struct {
@@ -43,5 +48,22 @@ func (c *Controller) GenerateTinyUrl(rw http.ResponseWriter, req *http.Request) 
 }
 
 func (c *Controller) RedirectTinyUrl(rw http.ResponseWriter, req *http.Request) {
+	params := mux.Vars(req)
+	hashCode := params["hashCode"]
+	url := c.ser.RedirectTinyUrl(hashCode)
+	if url != "" {
+		log.Println("redirecting to : ", url)
+		http.Redirect(rw, req, url, http.StatusSeeOther)
+	} else {
+		log.Println("url not found: ", params)
+		log.Println("redirecting to default url: ", defaultUrl)
+		http.Redirect(rw, req, defaultUrl, http.StatusSeeOther)
+	}
 
+}
+func (c *Controller) HomePage(rw http.ResponseWriter, req *http.Request) {
+	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusNotFound)
+	rw.Write([]byte(`{"status" : "failed","message" : "generate tiny url please"}`))
+	return
 }

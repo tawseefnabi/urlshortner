@@ -21,22 +21,26 @@ func NewRepository(db *gorm.DB) *Repository {
 	}
 }
 
-func (repo *Repository) Save(urlModel model.UrlModel, hash string) {
+func (r *Repository) Save(urlModel model.UrlModel, hash string) {
 	var urlData model.TinyUrlData
-	repo.Db.Where("hash= (?)", hash).Find(&urlData)
+	r.Db.Where("hash= (?)", hash).Find(&urlData)
 	if urlData.Url == "" {
-		repo.Db.Create(&model.TinyUrlData{
+		r.Db.Create(&model.TinyUrlData{
 			Hash: hash,
-			Url:  urlData.Url,
+			Url:  urlModel.Url,
 		})
 		log.Println("Data is created for url: ", urlModel.Url, " with hash: ", hash)
 	} else {
 		id := uuid.New()
-		repo.Db.Create(&model.TinyUrlData{
+		r.Db.Create(&model.TinyUrlData{
 			Hash: id.String(),
 			Url:  urlModel.Url,
 		})
 		log.Println("hash already existed, creating another hash", id.String())
 	}
-
+}
+func (r *Repository) Get(hash string) model.TinyUrlData {
+	var urlData model.TinyUrlData
+	r.Db.Where("hash= (?)", hash).Find(&urlData)
+	return urlData
 }

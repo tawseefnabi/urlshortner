@@ -1,11 +1,9 @@
 package model
 
-import (
-	"gorm.io/gorm"
-)
+import "gorm.io/gorm"
 
 type UrlModel struct {
-	Url string `json:url`
+	Url string `json:"url"`
 }
 type TinyUrlData struct {
 	gorm.Model
